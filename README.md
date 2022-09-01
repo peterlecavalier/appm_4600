@@ -1,4 +1,4 @@
-# APPM 4600 lab code
+# APPM 4600 Lab Code
 ## Peter LeCavalier
 
 This repo contains all the files for the lab section of APPM 4600 - Numerical Methods and Scientific Computation.
