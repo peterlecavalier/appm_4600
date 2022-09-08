@@ -13,8 +13,8 @@ y = p(x)
 plt.plot(x, y, label='(x-2)^9')
 
 # Formatting
-plt.xlabel(x)
-plt.ylabel(y)
+plt.xlabel('x')
+plt.ylabel('y')
 
 plt.legend()
 
