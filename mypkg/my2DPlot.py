@@ -34,3 +34,12 @@ class my2DPlot:
     def save(self, fileName):
         # Saves the plot to a custom filename
         plt.savefig(fileName)
+class my2DPlotVect(my2DPlot):
+    # This class is for plotting vectors instead of functions
+    # It inherits from my2DPlot
+    def __init__(self,x,y):
+        # This init initializes the plotting window
+        self.p = plt.plot(x,y)
+    def addPlot(self,x2,y2):
+        # Adds a new plot to the window
+        self.p = plt.plot(x2,y2)
