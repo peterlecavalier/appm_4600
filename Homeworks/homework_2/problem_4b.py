@@ -7,7 +7,7 @@ from mypkg.my2DPlot import my2DPlotVect as myplt
 import numpy as np
 
 ##### Problem 4b #####
-theta = np.linspace(0, 2, 1000)
+theta = np.linspace(0, 2*np.pi, 1000)
 # First part:
 R = 1.2
 delta_r = 0.1

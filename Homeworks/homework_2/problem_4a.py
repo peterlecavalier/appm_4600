@@ -6,13 +6,9 @@ import mypkg.prini as prini
 
 import numpy as np
 
-##### Problem 3d #####
+##### Problem 4a #####
 t = np.linspace(0, np.pi, 31)
 y = np.cos(t)
-
-print(t)
-print(y)
-
 S = 0
 for i in range(len(t)):
     S += (t[i] * y[i])
