@@ -50,6 +50,7 @@ def bisection(f,a,b,tol,Nmax):
             - ier = 0 == success
             - ier = 2 => ran out of iterations
             - ier = 3 => other error ==== You can explain
+      count - number of iterations it took to find the root (or 0 if error)
     '''
 
     '''     first verify there is a root we can find in the interval '''
@@ -57,28 +58,29 @@ def bisection(f,a,b,tol,Nmax):
     if (fa*fb>0):
        ier = 1
        astar = a
-       return [astar, ier]
+       return [astar, ier, 0]
 
     ''' verify end point is not a root '''
     if (fa == 0):
       astar = a
-      ier =0
-      return [astar, ier]
+      ier = 0
+      return [astar, ier, 0]
 
     if (fb ==0):
       astar = b
       ier = 0
-      return [astar, ier]
+      return [astar, ier, 0]
 
     count = 0
     while (count < Nmax):
+      count = count + 1
       c = 0.5*(a+b)
       fc = f(c)
 
       if (fc ==0):
         astar = c
         ier = 0
-        return [astar, ier]
+        return [astar, ier, count]
 
       if (fa*fc<0):
          b = c
@@ -88,18 +90,16 @@ def bisection(f,a,b,tol,Nmax):
       else:
         astar = c
         ier = 3
-        return [astar, ier]
+        return [astar, ier, count]
 
       if (abs(b-a)<tol):
         astar = a
         ier =0
-        return [astar, ier]
-      
-      count = count +1
+        return [astar, ier, count]
 
     astar = a
     ier = 2
-    return [astar,ier] 
+    return [astar,ier, count] 
 
 def fixedpt(f,x0,tol,Nmax):
 
