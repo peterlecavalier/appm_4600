@@ -146,3 +146,29 @@ def fixedpt_mod(f,x0,tol,Nmax):
     xstar = x1
     ier = 1
     return [xstar, ier]
+
+def fixedpt_mod2(f,x0,tol,Nmax):
+    """
+    Modified fixed pt method to track all iteration approximations
+    """
+
+    ''' x0 = initial guess''' 
+    ''' Nmax = max number of iterations'''
+    ''' tol = stopping tolerance'''
+
+    all_iters = []
+
+    count = 0
+    while (count <Nmax):
+       count = count +1
+       x1 = f(x0)
+       all_iters.append(x1)
+       if (abs(x1-x0) <tol):
+          xstar = x1
+          ier = 0
+          return [all_iters, xstar, ier]
+       x0 = x1
+
+    xstar = x1
+    ier = 1
+    return [all_iters, xstar, ier]
