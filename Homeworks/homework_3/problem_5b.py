@@ -86,7 +86,4 @@ plt.color('black')
 plt.legend()
 plt.save('5b_plot.png')
 plt.show()
-
-
-
 ##### END #####
