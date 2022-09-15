@@ -29,14 +29,15 @@ class Iteration1D:
                 pstar = fixedpt(self.f, self.p0, self.tol, self.Nmax)
             else:
                 return -1
+        elif self.method == 'fixedpt_mod':
+            if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+                pstar = fixedpt_mod(self.f, self.p0, self.tol, self.Nmax)
+            else:
+                return -1
         
         return pstar # the root
 
 
-# subroutines encapsulated by class
-# these can be defined in the same file,
-# outside of the class implementation
-# just copy paste fixedpt and bisection functions
 def bisection(f,a,b,tol,Nmax):
     '''
     Inputs:
@@ -112,6 +113,31 @@ def fixedpt(f,x0,tol,Nmax):
        count = count +1
        x1 = f(x0)
        if (abs(x1-x0) <tol):
+          xstar = x1
+          ier = 0
+          return [xstar,ier]
+       x0 = x1
+
+    xstar = x1
+    ier = 1
+    return [xstar, ier]
+
+
+def fixedpt_mod(f,x0,tol,Nmax):
+    """
+    Modified fixed pt method to return approximation within
+    ABSOLUTE error tolerance instead of relative.
+    """
+
+    ''' x0 = initial guess''' 
+    ''' Nmax = max number of iterations'''
+    ''' tol = stopping tolerance'''
+
+    count = 0
+    while (count <Nmax):
+       count = count +1
+       x1 = f(x0)
+       if (abs(x1-x0)/abs(x0) <tol):
           xstar = x1
           ier = 0
           return [xstar,ier]
