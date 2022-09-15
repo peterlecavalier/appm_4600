@@ -1,3 +1,5 @@
+import numpy as np
+
 class Iteration1D:
     def __init__(self, f, method):
         # we assign to or initialize as None all self attributes
@@ -32,6 +34,11 @@ class Iteration1D:
         elif self.method == 'fixedpt_mod':
             if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
                 pstar = fixedpt_mod(self.f, self.p0, self.tol, self.Nmax)
+            else:
+                return -1
+        elif self.method == 'fixedpt_mod2':
+            if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+                pstar = fixedpt_mod2(self.f, self.p0, self.tol, self.Nmax)
             else:
                 return -1
         
@@ -156,13 +163,13 @@ def fixedpt_mod2(f,x0,tol,Nmax):
     ''' Nmax = max number of iterations'''
     ''' tol = stopping tolerance'''
 
-    all_iters = []
+    all_iters = np.zeros((Nmax, 1))
 
     count = 0
     while (count <Nmax):
        count = count +1
        x1 = f(x0)
-       all_iters.append(x1)
+       x[count - 1] = x1
        if (abs(x1-x0) <tol):
           xstar = x1
           ier = 0
