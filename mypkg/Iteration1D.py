@@ -19,6 +19,8 @@ class Iteration1D:
         self.pstar = None
         # iters for newton or fixedpt
         self.p_iters = None
+        # derivative for newton
+        self.fprime = None
 
     def root(self):
         if self.method == 'bisection':
@@ -39,6 +41,11 @@ class Iteration1D:
         elif self.method == 'fixedpt_mod2':
             if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
                 pstar = fixedpt_mod2(self.f, self.p0, self.tol, self.Nmax)
+            else:
+                return -1
+        elif self.method == 'newton':
+            if self.f is not None and self.fprime is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+                pstar = newtons(self.f, self.fprime, self.p0, self.tol, self.Nmax)
             else:
                 return -1
         
@@ -179,3 +186,18 @@ def fixedpt_mod2(f,x0,tol,Nmax):
     xstar = x1
     ier = 1
     return [all_iters, xstar, ier]
+
+def newtons(f, fprime, p0, tol, Nmax):
+  ## Call needs to include self.fprime = ...
+  for j in range(Nmax):
+    p = p0 - f(p0)/fprime(p0)
+    if abs(p - p0) < tol:
+      pstar = p
+      ier = 0
+      return [pstar, ier]
+    
+    p0 = p
+
+  ier = 1
+  pstar = p
+  return [pstar, ier]
