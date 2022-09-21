@@ -169,7 +169,7 @@ def fixedpt_mod2(f,x0,tol,Nmax):
     while (count <Nmax):
        count = count +1
        x1 = f(x0)
-       x[count - 1] = x1
+       all_iters[count - 1] = x1
        if (abs(x1-x0) <tol):
           xstar = x1
           ier = 0
