@@ -50,6 +50,19 @@ class Iteration1D:
                 return -1
         
         return pstar # the root
+    
+    def compute_order(self, x, xstar):
+      diff1 = np.abs(x[1:]-xstar)
+      # p_n-p (from the first index to the second to last)
+      diff2 = np.abs(x[0:-1]-xstar)
+      # linear fit to log of differences
+      fit = np.polyfit(np.log(diff2.flatten()),np.log(diff1.flatten()),1)
+      print('the order equation is')
+      print('log(|p_{n+1}-p|) = log(lambda) + alpha*log(|p_n-p|) where')
+      print('lambda = ' + str(np.exp(fit[1])))
+      print('alpha = ' + str(fit[0]))
+      return [fit,diff1,diff2]
+
 
 
 def bisection(f,a,b,tol,Nmax):
@@ -180,11 +193,13 @@ def fixedpt_mod2(f,x0,tol,Nmax):
        if (abs(x1-x0) <tol):
           xstar = x1
           ier = 0
+          all_iters = all_iters[:count-1]
           return [all_iters, xstar, ier]
        x0 = x1
 
     xstar = x1
     ier = 1
+    all_iters = all_iters[:count-1]
     return [all_iters, xstar, ier]
 
 def newtons(f, fprime, p0, tol, Nmax):
