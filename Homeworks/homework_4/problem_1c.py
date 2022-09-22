@@ -27,5 +27,5 @@ p.print()
 # Print the error code
 print(f"The error code is: {x_newton[2]}")
 # Print number of iterations
-print(f"Newton's took {len(x_newton[0])} iterations.")
+print(f"Newton's took {len(x_newton[0]) - 1} iterations.")
 ##### END #####

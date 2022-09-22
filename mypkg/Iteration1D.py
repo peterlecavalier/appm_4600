@@ -11,6 +11,7 @@ class Iteration1D:
         self.b = None
         # initial guess for newton/fixedpt
         self.p0 = None
+        self.p1 = None
         # tolerance and max iter
         self.tol = None
         self.Nmax = None
@@ -24,33 +25,38 @@ class Iteration1D:
         self.fprime = None
 
     def root(self):
-        if self.method == 'bisection':
-            if self.f is not None and self.a is not None and self.b is not None and self.tol is not None and self.Nmax is not None:
-                pstar = bisection(self.f, self.a, self.b, self.tol, self.Nmax)
-            else:
-                return -1
-        elif self.method == 'fixedpt':
-            if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
-                pstar = fixedpt(self.f, self.p0, self.tol, self.Nmax)
-            else:
-                return -1
-        elif self.method == 'fixedpt_mod':
-            if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
-                pstar = fixedpt_mod(self.f, self.p0, self.tol, self.Nmax)
-            else:
-                return -1
-        elif self.method == 'fixedpt_mod2':
-            if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
-                pstar = fixedpt_mod2(self.f, self.p0, self.tol, self.Nmax)
-            else:
-                return -1
-        elif self.method == 'newton':
-            if self.f is not None and self.fprime is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
-                pstar = newtons(self.f, self.fprime, self.p0, self.tol, self.Nmax)
-            else:
-                return -1
+      if self.method == 'bisection':
+        if self.f is not None and self.a is not None and self.b is not None and self.tol is not None and self.Nmax is not None:
+          pstar = bisection(self.f, self.a, self.b, self.tol, self.Nmax)
+        else:
+          return -1
+      elif self.method == 'fixedpt':
+        if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+          pstar = fixedpt(self.f, self.p0, self.tol, self.Nmax)
+        else:
+          return -1
+      elif self.method == 'fixedpt_mod':
+        if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+          pstar = fixedpt_mod(self.f, self.p0, self.tol, self.Nmax)
+        else:
+          return -1
+      elif self.method == 'fixedpt_mod2':
+        if self.f is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+          pstar = fixedpt_mod2(self.f, self.p0, self.tol, self.Nmax)
+        else:
+          return -1
+      elif self.method == 'newton':
+        if self.f is not None and self.fprime is not None and self.p0 is not None and self.tol is not None and self.Nmax is not None:
+          pstar = newtons(self.f, self.fprime, self.p0, self.tol, self.Nmax)
+        else:
+          return -1
+      elif self.method == 'secant':
+        if self.f is not None and self.p0 is not None and self.p1 is not None and self.tol is not None and self.Nmax is not None:
+          pstar = secant(self.f, self.p0, self.p1, self.tol, self.Nmax)
+        else:
+          return -1
         
-        return pstar # the root
+      return pstar # the root
     
     def compute_order(self, x, xstar, fig_fp=None):
       diff1 = np.abs(x[1:]-xstar)
@@ -207,16 +213,16 @@ def fixedpt_mod2(f,x0,tol,Nmax):
     ''' tol = stopping tolerance'''
 
     all_iters = np.zeros((Nmax, 1))
-
+    all_iters[0] = x0
     count = 0
-    while (count <Nmax):
+    for count in range(1, Nmax):
        count = count +1
        x1 = f(x0)
-       all_iters[count - 1] = x1
+       all_iters[count] = x1
        if (abs(x1-x0) <tol):
           xstar = x1
           ier = 0
-          all_iters = all_iters[:count]
+          all_iters = all_iters[:count+1]
           return [all_iters, xstar, ier]
        x0 = x1
 
@@ -226,7 +232,8 @@ def fixedpt_mod2(f,x0,tol,Nmax):
 
 def newtons(f, fprime, p0, tol, Nmax):
   all_iters = np.zeros((Nmax, 1))
-  for j in range(Nmax):
+  all_iters[0] = p0
+  for j in range(1, Nmax):
     p = p0 - f(p0)/fprime(p0)
     all_iters[j] = p
     if abs(p - p0) < tol:
@@ -240,3 +247,24 @@ def newtons(f, fprime, p0, tol, Nmax):
   ier = 1
   pstar = p
   return [all_iters, pstar, ier]
+
+def secant(f, x0, x1, tol, Nmax):
+  all_iters = np.zeros((Nmax, 1))
+  all_iters[0] = x0
+  all_iters[1] = x1
+  for j in range(2, Nmax):
+    x = x1 - f(x1)*(x0 - x1)/(f(x0) - f(x1))
+    all_iters[j] = x
+    if abs(x - x1) < tol:
+      xstar = x
+      ier = 0
+      all_iters = all_iters[:j+1]
+      return [all_iters, xstar, ier]
+    
+    x0 = x1
+    x1 = x
+
+  ier = 1
+  xstar = x
+  return [all_iters, xstar, ier]
+
