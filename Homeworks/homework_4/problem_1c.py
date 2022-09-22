@@ -22,8 +22,10 @@ find.tol = 1e-13; find.Nmax = 100;
 # find the root
 x_newton = find.root()
 # Print the root
-p = prini("real", "The approximated root is:", x_newton[0])
+p = prini("real", "The approximated root is:", x_newton[1])
 p.print()
 # Print the error code
-print(f"The error code is: {x_newton[1]}")
+print(f"The error code is: {x_newton[2]}")
+# Print number of iterations
+print(f"Newton's took {len(x_newton[0])} iterations.")
 ##### END #####

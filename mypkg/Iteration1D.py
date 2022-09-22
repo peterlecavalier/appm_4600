@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Iteration1D:
     def __init__(self, f, method):
@@ -51,16 +52,38 @@ class Iteration1D:
         
         return pstar # the root
     
-    def compute_order(self, x, xstar):
+    def compute_order(self, x, xstar, fig_fp=None):
       diff1 = np.abs(x[1:]-xstar)
       # p_n-p (from the first index to the second to last)
       diff2 = np.abs(x[0:-1]-xstar)
       # linear fit to log of differences
+
+      # Following avoids dividing by zero:
+      while(True):
+        if diff1[-1] == 0 or diff2[-1] == 0:
+          diff1 = diff1[:-1]
+          diff2 = diff2[:-1]
+        else:
+          break
+
       fit = np.polyfit(np.log(diff2.flatten()),np.log(diff1.flatten()),1)
       print('the order equation is')
       print('log(|p_{n+1}-p|) = log(lambda) + alpha*log(|p_n-p|) where')
       print('lambda = ' + str(np.exp(fit[1])))
       print('alpha = ' + str(fit[0]))
+
+      # plot the data
+      plt.loglog(diff2,diff1,'ro',label='fixedpt data')
+      # plot the fit
+      plt.loglog(diff2,np.exp(fit[1]+fit[0]*np.log(diff2)),'b-',label='fixedpt fit')
+      # label the plot
+      plt.xlabel('$|p_{n}-p|$')
+      plt.ylabel('$|p_{n+1}-p|$')
+      plt.legend()
+      plt.title(f'lambda = {np.exp(fit[1])}, alpha {fit[0]}')
+      if fig_fp is not None:
+        plt.savefig(fig_fp)
+      plt.show()
       return [fit,diff1,diff2]
 
 
@@ -193,26 +216,27 @@ def fixedpt_mod2(f,x0,tol,Nmax):
        if (abs(x1-x0) <tol):
           xstar = x1
           ier = 0
-          all_iters = all_iters[:count-1]
+          all_iters = all_iters[:count]
           return [all_iters, xstar, ier]
        x0 = x1
 
     xstar = x1
     ier = 1
-    all_iters = all_iters[:count-1]
     return [all_iters, xstar, ier]
 
 def newtons(f, fprime, p0, tol, Nmax):
-  ## Call needs to include self.fprime = ...
+  all_iters = np.zeros((Nmax, 1))
   for j in range(Nmax):
     p = p0 - f(p0)/fprime(p0)
+    all_iters[j] = p
     if abs(p - p0) < tol:
       pstar = p
       ier = 0
-      return [pstar, ier]
+      all_iters = all_iters[:j+1]
+      return [all_iters, pstar, ier]
     
     p0 = p
 
   ier = 1
   pstar = p
-  return [pstar, ier]
+  return [all_iters, pstar, ier]
