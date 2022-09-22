@@ -23,6 +23,7 @@ class Iteration1D:
         self.p_iters = None
         # derivative for newton
         self.fprime = None
+        self.fprime2 = None
 
     def root(self):
       if self.method == 'bisection':
@@ -53,6 +54,11 @@ class Iteration1D:
       elif self.method == 'secant':
         if self.f is not None and self.p0 is not None and self.p1 is not None and self.tol is not None and self.Nmax is not None:
           pstar = secant(self.f, self.p0, self.p1, self.tol, self.Nmax)
+        else:
+          return -1
+      elif self.method == 'new_bisection':
+        if self.f is not None and self.fprime is not None and self.fprime2 is not None and self.a is not None and self.b is not None and self.tol is not None and self.Nmax is not None:
+          pstar = new_bisection(self.f,self.fprime,self.fprime2,self.a,self.b,self.tol,self.Nmax)
         else:
           return -1
         
@@ -267,4 +273,71 @@ def secant(f, x0, x1, tol, Nmax):
   ier = 1
   xstar = x
   return [all_iters, xstar, ier]
+
+def new_bisection(f,fprime,fprime2,a,b,tol,Nmax):
+    '''
+    Inputs:
+      f,fprime, fprime2, a,b       - function and endpoints of initial interval
+      tol, Nmax   - bisection stops when interval length < tol
+                  - or if Nmax iterations have occured
+    Returns:
+      astar - approximation of root
+      ier   - error message
+            - ier = 1 => cannot tell if there is a root in the interval
+            - ier = 0 == success
+            - ier = 2 => ran out of iterations
+            - ier = 3 => other error ==== You can explain
+      count - number of iterations it took to find the root (or 0 if error)
+    '''
+
+    '''     first verify there is a root we can find in the interval '''
+    fa = f(a); fb = f(b);
+    if (fa*fb>0):
+       ier = 1
+       astar = a
+       return [astar, ier, 0]
+
+    ''' verify end point is not a root '''
+    if (fa == 0):
+      astar = a
+      ier = 0
+      return [astar, ier, 0]
+
+    if (fb ==0):
+      astar = b
+      ier = 0
+      return [astar, ier, 0]
+
+    count = 0
+    while (count < Nmax):
+      count = count + 1
+      c = 0.5*(a+b)
+      fc = f(c)
+
+      if (fc ==0):
+        astar = c
+        ier = 0
+        return [astar, ier, count]
+
+      if (fa*fc<0):
+         b = c
+      elif (fb*fc<0):
+        a = c
+        fa = fc
+      else:
+        astar = c
+        ier = 3
+        return [astar, ier, count]
+
+      # Instead of checking within the tolerance, check if it's within the basin of convergence
+      abs_gprime = f(a)*fprime2(a)/(fprime(a)**2)
+      abs_gprime = abs(abs_gprime)
+      if (abs_gprime < 1):
+        # Calling Newton's with newly found starting point
+        [all_iters, astar, ier] = newtons(f, fprime, a, tol, Nmax)
+        return [astar, ier, count + len(all_iters)]
+
+    astar = a
+    ier = 2
+    return [astar,ier, count]
 
