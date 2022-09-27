@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+##### Problem 1a #####
 # How many iterations
 num_iters = 60
 # Store all the iterations
@@ -35,3 +36,4 @@ ax[1].set_ylabel('Absolute Error y')
 plt.suptitle('Convergence of the Iteration Scheme')
 plt.savefig('problem_1a_plot.png')
 plt.show()
+##### END #####
