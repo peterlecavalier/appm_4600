@@ -13,17 +13,18 @@ find.tol = 1e-32
 find.Nmax = 100
 find.p0 = 4.5
 
-
-
 x_bisection = find.root()
-print(f"Bisection Sol: {x_bisection}")
+print(f"Bisection Solution: {x_bisection[0]}")
+print(f"Num. iters: {x_bisection[2]}")
 
 find.method = 'newton'
 
 x_newton = find.root()
-print(f"Newton's Sol: {len(x_newton[0])}")
+print(f"Newton's Solution: {x_newton[1]}")
+print(f"Num. iters: {len(x_newton[0])}")
 
 find.method = 'new_bisection'
 
 x_merged = find.root()
-print(f"Merged Sol: {x_merged}")
+print(f"Merged Solution: {x_merged[0]}")
+print(f"Num. iters: {x_merged[2]}")

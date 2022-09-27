@@ -333,6 +333,7 @@ def new_bisection(f,fprime,fprime2,a,b,tol,Nmax):
       abs_gprime = f(a)*fprime2(a)/(fprime(a)**2)
       abs_gprime = abs(abs_gprime)
       if (abs_gprime < 1):
+        print(count)
         # Calling Newton's with newly found starting point
         [all_iters, astar, ier] = newtons(f, fprime, a, tol, Nmax)
         return [astar, ier, count + len(all_iters)]
