@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-##### Problem 1a #####
+##### Problem 1c #####
 def evalF(x):
     F = np.zeros(2)
     
@@ -16,14 +16,7 @@ def evalF(x):
     return F
     
 def evalJ(x):
-    rows = 2
-    cols = 2
-    size = rows*cols
-
-    J = np.array([0]*size).reshape(rows,cols)
-    
-    J[0,:] = [6*x[0], -2*x[1]]
-    J[1,:] = [3*x[1]**2 - 3*x[0]**2, 6*x[0]*x[1]]
+    J = np.array([[6*x[0], -2*x[1]], [3*x[1]**2 - 3*x[0]**2, 6*x[0]*x[1]]])
     return J
 x0 = [1, 1]
 Nmax = 100
