@@ -1,6 +1,7 @@
 from numpy.linalg import inv 
 from numpy.linalg import norm
 import numpy as np 
+import matplotlib.pyplot as plt
 
 '''
 MODIFIED FROM CODE PROVIDED BY ADRIANNA GILLMAN
@@ -15,6 +16,41 @@ class nd_iteration():
         self.tol = None
         self.Nmax = None
     
+    def compute_order(self, x, xstar, fig_fp=None):
+      diff1 = x[1:] - xstar
+      diff1 = np.array([np.linalg.norm(i) for i in diff1])
+      # p_n-p (from the first index to the second to last)
+      diff2 = x[0:-1] - xstar
+      diff2 = np.array([np.linalg.norm(i) for i in diff2])
+      # linear fit to log of differences
+
+      # Following avoids dividing by zero:
+      while(True):
+        if diff1[-1] == 0 or diff2[-1] == 0:
+          diff1 = diff1[:-1]
+          diff2 = diff2[:-1]
+        else:
+          break
+      fit = np.polyfit(np.log(diff2.flatten()),np.log(diff1.flatten()),1)
+      print('the order equation is')
+      print('log(|p_{n+1}-p|) = log(lambda) + alpha*log(|p_n-p|) where')
+      print('lambda = ' + str(np.exp(fit[1])))
+      print('alpha = ' + str(fit[0]))
+
+      # plot the data
+      plt.loglog(diff2,diff1,'ro',label='iteration data')
+      # plot the fit
+      plt.loglog(diff2,np.exp(fit[1]+fit[0]*np.log(diff2)),'b-',label='fit')
+      # label the plot
+      plt.xlabel('$|p_{n}-p|$')
+      plt.ylabel('$|p_{n+1}-p|$')
+      plt.legend()
+      plt.title(f'lambda = {np.exp(fit[1])}, alpha {fit[0]}')
+      if fig_fp is not None:
+        plt.savefig(fig_fp)
+      plt.show()
+      return [fit,diff1,diff2]
+
     def Newton(self, x0=None,tol=None,Nmax=None):
 
         ''' inputs: x0 = initial guess, tol = tolerance, Nmax = max its'''
@@ -23,41 +59,44 @@ class nd_iteration():
         # Verify that needed vars are inputted somewhere
         if x0 is None:
             if self.x0 is None:
-                print("ERROR: Please input x0")
-                return
+                raise ValueError("Please input x0")
             else:
                 x0 = self.x0
         if tol is None:
             if self.tol is None:
-                print("ERROR: Please input tol")
-                return
+                raise ValueError("Please input tol")
             else:
                 tol = self.tol
         if Nmax is None:
             if self.Nmax is None:
-                print("ERROR: Please input Nmax")
-                return
+                raise ValueError("Please input Nmax")
             else:
                 Nmax = self.Nmax
-        
+
+        all_x = np.zeros((Nmax + 1, x0.shape[0]))
 
         for its in range(Nmax):
+            all_x[its] = x0
             J = self.__evalJ(x0)
             Jinv = inv(J)
             F = self.__evalF(x0)
             
-            x1 = x0 - Jinv.dot(F)
+            x1 = np.squeeze(np.expand_dims(x0, -1) - np.matmul(Jinv, F))
             
             if (norm(x1-x0) < tol):
+                all_x[its+1] = x1
+                all_x = all_x[:its+2]
                 xstar = x1
                 ier = 0
-                return[xstar, ier, its]
+                return [all_x, xstar, ier, its]
                 
             x0 = x1
         
+        all_x[its+1] = x1
+        all_x = all_x[:its+2]
         xstar = x1
         ier = 1
-        return[xstar,ier,its]
+        return [all_x, xstar,ier,its]
             
     def LazyNewton(self,x0=None,tol=None,Nmax=None):
 
@@ -68,20 +107,17 @@ class nd_iteration():
         # Verify that needed vars are inputted somewhere
         if x0 is None:
             if self.x0 is None:
-                print("ERROR: Please input x0")
-                return
+                raise ValueError("Please input x0")
             else:
                 x0 = self.x0
         if tol is None:
             if self.tol is None:
-                print("ERROR: Please input tol")
-                return
+                raise ValueError("Please input tol")
             else:
                 tol = self.tol
         if Nmax is None:
             if self.Nmax is None:
-                print("ERROR: Please input Nmax")
-                return
+                raise ValueError("Please input Nmax")
             else:
                 Nmax = self.Nmax
 
@@ -167,20 +203,17 @@ class nd_iteration():
         # Verify that needed vars are inputted somewhere
         if x0 is None:
             if self.x0 is None:
-                print("ERROR: Please input x0")
-                return
+                raise ValueError("Please input x0")
             else:
                 x0 = self.x0
         if tol is None:
             if self.tol is None:
-                print("ERROR: Please input tol")
-                return
+                raise ValueError("Please input tol")
             else:
                 tol = self.tol
         if Nmax is None:
             if self.Nmax is None:
-                print("ERROR: Please input Nmax")
-                return
+                raise ValueError("Please input Nmax")
             else:
                 Nmax = self.Nmax
 
