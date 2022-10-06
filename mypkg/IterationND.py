@@ -16,7 +16,7 @@ class nd_iteration():
         self.tol = None
         self.Nmax = None
     
-    def compute_order(self, x, xstar, fig_fp=None):
+    def compute_order(self, x, xstar, fig_fp=None, print_info=True):
       diff1 = x[1:] - xstar
       diff1 = np.array([np.linalg.norm(i) for i in diff1])
       # p_n-p (from the first index to the second to last)
@@ -32,10 +32,11 @@ class nd_iteration():
         else:
           break
       fit = np.polyfit(np.log(diff2.flatten()),np.log(diff1.flatten()),1)
-      print('the order equation is')
-      print('log(|p_{n+1}-p|) = log(lambda) + alpha*log(|p_n-p|) where')
-      print('lambda = ' + str(np.exp(fit[1])))
-      print('alpha = ' + str(fit[0]))
+      if print_info:
+        print('the order equation is')
+        print('log(|p_{n+1}-p|) = log(lambda) + alpha*log(|p_n-p|) where')
+        print('lambda = ' + str(np.exp(fit[1])))
+        print('alpha = ' + str(fit[0]))
 
       # plot the data
       plt.loglog(diff2,diff1,'ro',label='iteration data')
@@ -126,7 +127,7 @@ class nd_iteration():
         for its in range(Nmax):
 
             F = self.__evalF(x0)
-            x1 = x0 - Jinv.dot(F)
+            x1 = np.squeeze(np.expand_dims(x0, -1) - np.matmul(Jinv, F))
             
             if (norm(x1-x0) < tol):
                 xstar = x1
@@ -161,7 +162,7 @@ class nd_iteration():
         
         A0 = self.__evalJ(x0)
 
-        v = self.__evalF(x0)
+        v = np.squeeze(self.__evalF(x0))
         A = inv(A0)
 
         s = -A.dot(v)
@@ -170,7 +171,7 @@ class nd_iteration():
             '''(save v from previous step)'''
             w = v
             ''' create new v'''
-            v = self.__evalF(xk)
+            v = np.squeeze(self.__evalF(xk))
             '''y_k = F(xk)-F(xk-1)'''
             y = v-w;                   
             '''-A_{k-1}^{-1}y_k'''
@@ -243,3 +244,102 @@ class nd_iteration():
         xstar = x1
         ier = 1
         return[xstar,ier,its]
+
+    def SteepestDescent(self, x0, tol, Nmax):
+        # Verify that needed vars are inputted somewhere
+        if x0 is None:
+            if self.x0 is None:
+                raise ValueError("Please input x0")
+            else:
+                x0 = self.x0
+        if tol is None:
+            if self.tol is None:
+                raise ValueError("Please input tol")
+            else:
+                tol = self.tol
+        if Nmax is None:
+            if self.Nmax is None:
+                raise ValueError("Please input Nmax")
+            else:
+                Nmax = self.Nmax
+        
+        def evalG(x):
+            # Returns the F evaluation + g(x)
+            F = self.__evalF(x)
+            return F, np.sum(np.square(F))
+        
+        def evalZ(x, F):
+            return 2 * np.matmul(np.transpose(self.__evalJ(x)), F)
+        
+        x = x0
+
+        allx = np.zeros((Nmax, *x.shape))
+
+        # Step 1
+        k = 1
+        # Step 2
+        while k <= Nmax:
+            allx[k-1] = x
+
+            # Step 3
+            F, g1 = evalG(x)
+            z = evalZ(x, F)
+            z0 = norm(z)
+
+            # Step 4
+            if z0 == 0:
+                return [allx[:k], x, 'Zero gradient', k]
+            
+            # Step 5
+            # Make z a unit vector
+            z = z / z0
+            a1 = 0
+            a3 = 1
+            _, g3 = evalG(x - a3*z)
+
+            # Step 6
+            while g3 >= g1:
+                # Step 7
+                a3 = a3/2
+                _, g3 = evalG(x - a3*z)
+
+                # Step 8
+                if a3 < (tol/2):
+                    return [allx[:k], x, "No likely improvement", k]
+            
+            # Step 9
+            a2 = a3/2
+            _, g2 = evalG(x - a2*z)
+
+            # Step 10
+            h1 = (g2 - g1)/a2
+            h2 = (g3 - g2)/(a3 - a2)
+            h3 = (h2 - h1)/a3
+
+            # Step 11
+            # The critical point of P occurs at h0
+            a0 = 0.5*(a2 - (h1/h3))
+            _, g0 = evalG(x - a0*z)
+
+            # Step 12
+            if g0 < g3:
+                a = a0
+                g = g0
+            else:
+                a = a3
+                g = g3
+
+            # Step 13
+            x = x - a*z
+
+            # Step 14
+            if np.abs(g - g1) < tol:
+                return [allx[:k], x, "The procedure was successful", k]
+            
+            # Step 15
+            k += 1
+        
+        # Step 16
+        return [allx[:k], x, "Maximum iterations exceeded", k]
+
+
