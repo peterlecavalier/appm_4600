@@ -1,6 +1,6 @@
 import numpy as np
 
-def find_point(xeval, xint, idx):
+def find_points(xeval, xint, idx):
     """
     xeval is the larger array of points
     xint is the smaller array of intervals
@@ -13,7 +13,7 @@ def find_point(xeval, xint, idx):
 xeval = np.linspace(0,10,1001)
 xint = np.linspace(0,10,11)
 # Should output 101 values between 2 and 3
-print(find_point(xeval, xint, 3))
+print(find_points(xeval, xint, 3))
 
 
 def eval_line(x0, fx0, x1, fx1, xeval):
