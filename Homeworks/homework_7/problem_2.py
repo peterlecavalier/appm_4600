@@ -1,6 +1,3 @@
-import sys
-import os
-sys.path.insert(1, os.path.abspath('.\..\..'))
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -21,9 +18,10 @@ x_fine = np.linspace(-1, 1, 1001)
 fx_fine = f(x_fine)
 
 fig, ax = plt.subplots(2, 3, figsize=(16, 10), sharex=True)
+fig2, ax2 = plt.subplots(2, 3, figsize=(16, 10), sharex=True)
 
 # Making an n-values list to get specific ns
-n_vals = [2, 10, 19, 50, 100, 1001]
+n_vals = [2, 10, 19, 50, 100, 300]
 for n_i, n in enumerate(n_vals):
     # All xi points
     xi = np.linspace(1, n, n)
@@ -33,8 +31,10 @@ for n_i, n in enumerate(n_vals):
 
     xfine_px = []
     px = []
+    new_idxs = []
     for idx, i in enumerate(x_fine):
         if i not in xi:
+            new_idxs.append(idx)
             xfine_px.append(i)
             px.append(eval_barycentric(i, xi, fxi))
     px = np.array(px)
@@ -48,7 +48,21 @@ for n_i, n in enumerate(n_vals):
     ax[row][col].plot(xfine_px, px, label=f'p(x), N={n}')
     ax[row][col].plot(x_fine, fx_fine, label='f(x)')
     ax[row][col].legend()
-plt.savefig('problem2_plot.png')
-plt.suptitle('Barycentric Interpolation')
+
+    new_fx_fine = fx_fine[new_idxs]
+    err = np.abs(new_fx_fine - px)
+
+    ax2[row][col].plot(xfine_px, err, label=f'p(x) error, N={n}')
+    ax2[row][col].legend()
+    ax2[row][col].set_yscale('log')
+    if n == 1001:
+        print(err)
+
+fig.suptitle('Barycentric Interpolation')
+fig.savefig('problem2_plot1.png')
+
+fig2.suptitle('Barycentric Interpolation Error')
+fig2.savefig('problem2_plot2.png')
+
 plt.show()
 ##### END #####

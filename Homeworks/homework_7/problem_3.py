@@ -42,7 +42,7 @@ for n in range(2, 20):
     ax[row][col].plot(xfine_px, px, label=f'p(x), N={n}')
     ax[row][col].plot(x_fine, fx_fine, label='f(x)')
     ax[row][col].legend()
-plt.savefig('problem3_plot.png')
 plt.suptitle('Barycentric (Chebyshev) Interpolation')
+plt.savefig('problem3_plot.png')
 plt.show()
 ##### END #####
