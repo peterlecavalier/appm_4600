@@ -43,6 +43,7 @@ for n in range(2, 20):
     ax[row][col].plot(x_fine, px, label=f'p(x), N={n}')
     ax[row][col].plot(x_fine, fx_fine, label='f(x)')
     ax[row][col].legend()
+plt.suptitle('Monomial Interpolation')
 plt.savefig('problem1_plot.png')
 plt.show()
 ##### END #####
