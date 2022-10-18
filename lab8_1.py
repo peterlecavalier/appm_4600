@@ -48,7 +48,7 @@ def driver():
 
     
     
-def  eval_lin_spline(xeval,Neval,a,b,f,Nint):
+def eval_lin_spline(xeval,Neval,a,b,f,Nint):
   '''create the intervals for piecewise approximations'''
   xint = np.linspace(a,b,Nint+1)
   xeval = np.linspace(a,b, Neval)

@@ -76,6 +76,8 @@ class nd_iteration():
 
         all_x = np.zeros((Nmax + 1, x0.shape[0]))
 
+        x1 = None
+
         for its in range(Nmax):
             all_x[its] = x0
             J = self.__evalJ(x0)
@@ -89,15 +91,15 @@ class nd_iteration():
                 all_x = all_x[:its+2]
                 xstar = x1
                 ier = 0
-                return [all_x, xstar, ier, its]
+                return [all_x, xstar, ier, its+1]
                 
             x0 = x1
         
-        all_x[its+1] = x1
-        all_x = all_x[:its+2]
+        all_x[Nmax] = x1
+        all_x = all_x[:Nmax+1]
         xstar = x1
         ier = 1
-        return [all_x, xstar,ier,its]
+        return [all_x, xstar,ier,Nmax]
             
     def LazyNewton(self,x0=None,tol=None,Nmax=None):
 
@@ -124,6 +126,7 @@ class nd_iteration():
 
         J = self.__evalJ(x0)
         Jinv = inv(J)
+        x1 = None
         for its in range(Nmax):
 
             F = self.__evalF(x0)
@@ -132,13 +135,13 @@ class nd_iteration():
             if (norm(x1-x0) < tol):
                 xstar = x1
                 ier = 0
-                return[xstar, ier, its]
+                return[xstar, ier, its+1]
                 
             x0 = x1
         
         xstar = x1
         ier = 1
-        return[xstar,ier,its]
+        return[xstar,ier,Nmax]
 
     def Broyden(self,x0=None,tol=None,Nmax=None):
         '''tol = desired accuracy
@@ -160,6 +163,25 @@ class nd_iteration():
         
         '''initialize with 1 newton step'''
         
+        # Verify that needed vars are inputted somewhere
+        if x0 is None:
+            if self.x0 is None:
+                raise ValueError("Please input x0")
+            else:
+                x0 = self.x0
+        if tol is None:
+            if self.tol is None:
+                raise ValueError("Please input tol")
+            else:
+                tol = self.tol
+        if Nmax is None:
+            if self.Nmax is None:
+                raise ValueError("Please input Nmax")
+            else:
+                Nmax = self.Nmax
+
+
+
         A0 = self.__evalJ(x0)
 
         v = np.squeeze(self.__evalF(x0))
@@ -192,7 +214,7 @@ class nd_iteration():
                 return[alpha,ier,its]
         alpha = xk
         ier = 1
-        return[alpha,ier,its]
+        return[alpha,ier,Nmax]
     
 
     def SlackerNewton(self,x0=None,tol=None,Nmax=None):
@@ -221,6 +243,7 @@ class nd_iteration():
         J = self.__evalJ(x0)
         Jinv = inv(J)
         update_tol = tol * 1e4
+        x1 = None
         for its in range(Nmax):
 
             F = self.__evalF(x0)
@@ -243,7 +266,7 @@ class nd_iteration():
         
         xstar = x1
         ier = 1
-        return[xstar,ier,its]
+        return[xstar,ier,Nmax]
 
     def SteepestDescent(self, x0, tol, Nmax):
         # Verify that needed vars are inputted somewhere
