@@ -29,7 +29,9 @@ axes = [lagrange_ax, hermite_ax, natcubic_ax, clampcubic_ax]
 for idx, n in enumerate([5, 10, 15, 20]):
     # n is the number of nodes
     # interpolation nodes
-    x = np.linspace(-5, 5, n)
+    # Instead of equally spacing, here we'll use Chebychev points
+    xi = np.linspace(1, n, n)
+    x = np.sort(5*np.cos((2*(xi) - 1)*np.pi / (2*(len(xi)))))
     # f evaluated at the xs
     fx = f(x)
     # fprime evaluated at the xs
@@ -37,7 +39,7 @@ for idx, n in enumerate([5, 10, 15, 20]):
 
     # evaluating the polynomial at many points on the interval
     neval = 1000
-    xeval = np.linspace(-5, 5, neval)
+    xeval = np.linspace(x[0], x[-1], neval)
     feval = f(xeval)
 
     # Setup the interpolation object
@@ -78,16 +80,16 @@ for idx, n in enumerate([5, 10, 15, 20]):
             ax[idx][0].set_title(f'N = {n}')
 
 # Set figure titles
-lagrange_fig.suptitle('Lagrange Interpolation')
-hermite_fig.suptitle('Hermite Interpolation')
-natcubic_fig.suptitle('Natural Cubic Spline Interpolation')
-clampcubic_fig.suptitle('Clamped Cubic Spline Interpolation')
+lagrange_fig.suptitle('Lagrange Interpolation (Chebychev nodes)')
+hermite_fig.suptitle('Hermite Interpolation (Chebychev nodes)')
+natcubic_fig.suptitle('Natural Cubic Spline Interpolation (Chebychev nodes)')
+clampcubic_fig.suptitle('Clamped Cubic Spline Interpolation (Chebychev nodes)')
 
 # Save each figure
-lagrange_fig.savefig('1_lagrange.png')
-hermite_fig.savefig('1_hermite.png')
-natcubic_fig.savefig('1_natural_cubic_spline.png')
-clampcubic_fig.savefig('1_clamped_cubic_spline.png')
+lagrange_fig.savefig('2_lagrange.png')
+hermite_fig.savefig('2_hermite.png')
+natcubic_fig.savefig('2_natural_cubic_spline.png')
+clampcubic_fig.savefig('2_clamped_cubic_spline.png')
 
 # Show all figures
 plt.show()
