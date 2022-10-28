@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+##### Problem 4 #####
 maclaurin = lambda x: x - (x**3)/6 + (x**5)/120
 fx = lambda x: np.sin(x)
 
@@ -46,3 +47,4 @@ ax[2][1].legend()
 
 plt.savefig('problem_4_plot.png')
 plt.show()
+##### END #####
