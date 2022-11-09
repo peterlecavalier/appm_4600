@@ -20,7 +20,6 @@ endpoints = np.arange(1, 150, 1)
 # Create an errors array to store the relative error of each endpoint
 errors = np.zeros(endpoints.shape, dtype=np.float64)
 
-
 for idx, i in enumerate(endpoints):
     results = []
     for gamma_idx, x in enumerate([2, 4, 6, 8, 10]):
@@ -48,7 +47,6 @@ plt.title('Average error for the gamma function approximation over x=[2, 4, 6, 8
 plt.savefig('2a_endpoint_plot.png')
 plt.show()
 
-
 ''' Experimentation to find number of intervals'''
 # Now that we've picked an endpoint of b=42, we can further expirement to find a good cutoff for our number of intervals.
 
@@ -61,10 +59,8 @@ actual_gammas = [gamma(x) for x in [2, 4, 6, 8, 10]]
 
 # Set up our interval numbers to loop through and test
 intervals = np.arange(1, 10000, 10)
-print(intervals.shape)
 # Create an errors array to store the relative error of each endpoint
 errors = np.zeros(intervals.shape, dtype=np.float64)
-
 
 for idx, i in enumerate(intervals):
     results = []
