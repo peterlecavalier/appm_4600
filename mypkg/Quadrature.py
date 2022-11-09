@@ -2,6 +2,12 @@ import numpy as np
 
 class MyQuad():
     def __init__(self,f=None,a=None,b=None, n=None):
+        '''
+        f: function
+        a: lower endpoint
+        b: higher endpoint
+        n: number of intervals
+        '''
         self.f = f
         self.a = a
         self.b = b

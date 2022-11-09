@@ -26,6 +26,7 @@ comp_simp_err = abs(comp_simp_result - scipy_result)
 # Print the results of our integration techniques
 print(f"Composite Trapezoidal={comp_trap_result}, with error={comp_trap_err}")
 print(f"Composite Simpson's={comp_simp_result}, with error={comp_simp_err}")
+print(f"SciPy built-in quadrature={scipy_result}")
 
 # Print number of function evaluations for SciPy built-in quadrature
 print(f"SciPy quad with 10^-6 tolerance evaluated f(s) {info['neval']} times.")
